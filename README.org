@@ -1,0 +1,10 @@
+* foo-test
+Port of online tests site called interviewzen.com in Haskell.
+
+** Pre-requisites
+Install Stack https://docs.haskellstack.org/en/stable/README/#how-to-install
+
+** Run
+stack setup
+stack build
+stack exec foo-test-exe
