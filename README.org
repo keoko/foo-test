@@ -10,3 +10,18 @@ stack setup
 stack build
 stack exec foo-test-exe
 #+end_src
+** TODO
+- home page
+- create interview
+- dashboard
+- apply test
+** NICE TO HACE
+- HTTPS with warp-tls
+- deploy to heroku or similar
+- HELP stack (Haskell Elm Linux PostgreSQL)
+- servant (check servant-crud)
+** Docs
+http://www.arsonsmatt.org/2015/06/07/servant-persistent.html
+http://martintrojer.github.io/beyond-clojure/2016/04/21/beyond-clojure-haskell
+https://medium.com/@saurabhnanda/why-building-web-apps-in-haskell-is-harder-than-it-ought-to-be-c9b13de0be4f#.fyaoancwx
+https://github.com/meiersi/HaskellerZ/tree/master/meetups/20150529-ZuriHac2015_Oliver_Charles-Web_Programming
