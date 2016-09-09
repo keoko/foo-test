@@ -28,6 +28,7 @@ executable foo-test-exe
                      , Spock >= 0.11
                      , mtl
                      , text
+                     , lucid
   default-language:    Haskell2010
 
 test-suite foo-test-test

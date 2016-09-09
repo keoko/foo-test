@@ -1,0 +1,8 @@
+* ChangeLog
+
+** Which web framework? Spock, Yesod, Snap, Scotty, Servant?
+Spock looks like the easier to understand.
+
+** Which templating library? Lucid, Heist, blaze-html, hamlet?
+I'll start with Lucid, although no big opinion on that.
+https://github.com/haskell-servant/servant/issues/297
