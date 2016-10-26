@@ -1,8 +1,27 @@
 * ChangeLog
 
-** Which web framework? Spock, Yesod, Snap, Scotty, Servant?
+** DONE Which web framework? Spock, Yesod, Snap, Scotty, Servant?
+CLOSED: [2016-10-26 Wed 08:20]
 Spock looks like the easier to understand, although changed my mind because Servant looks more interesting for APIs.
 
 ** Which templating library? Lucid, Heist, blaze-html, hamlet?
 I'll start with Lucid, although no big opinion on that.
 https://github.com/haskell-servant/servant/issues/297
+
+** Servant and static files
+
+** Hello World with servant
+https://github.com/mietek/hello-servant/blob/master/Main.hs
+
+** DB library
+It looks like Persistent would be a good starting point. There is also an example http://www.parsonsmatt.org/2015/06/07/servant-persistent.html
+
+** TODO deploy to heroku
+https://haskellonheroku.com/tutorial/
+
+
+** TODO how to server static content
+serveDirectory https://haskell-servant.github.io/tutorial/0.4/server.html
+or nginx?
+
+

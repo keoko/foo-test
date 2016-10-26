@@ -8,12 +8,15 @@ import Data.Proxy
 import Data.Text
 import Network.Wai.Handler.Warp
 import Servant
-import System.Environment
 
 type API = Get '[JSON] Text
+  :<|> "code" :> Raw
+--type API = "code" :> Raw
 
 apiHandler :: Server API
-apiHandler = return "hello world"
+apiHandler = return "hello world!!!"
+  :<|> serveDirectory "tutorial"
+--apiHandler = serveDirectory "tutorial"
 
 proxy :: Proxy API
 proxy = Proxy
