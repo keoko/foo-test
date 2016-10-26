@@ -15,16 +15,14 @@ import Text.Blaze.Html5 (p, Html)
 type API = Get '[JSON] Text
   :<|> "create" :> Get '[HTML] Html
   :<|> Raw
---type API = "code" :> Raw
 
 apiHandler :: Server API
 apiHandler = return "hello world!!!"
   :<|> createPageHandler
   :<|> serveDirectory "web"
---apiHandler = serveDirectory "tutorial"
 
 createPageHandler = return page
-  where page :: Html -- the Html from blaze
+  where page :: Html
         page = p "hello"
 
 proxy :: Proxy API
