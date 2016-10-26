@@ -27,6 +27,9 @@ executable foo-test-exe
                      , foo-test
                      , warp
                      , servant-server
+                     , servant-blaze
+                     , blaze-html
+                     , blaze-markup >= 0.7
                      , mtl
                      , text
                      , lucid

@@ -24,4 +24,12 @@ https://haskellonheroku.com/tutorial/
 serveDirectory https://haskell-servant.github.io/tutorial/0.4/server.html
 or nginx?
 
+** TODO auto reload files?
+** TODO HTTPS?
+** TODO CSS
 
+
+* Features
+** TODO signup
+** TODO start coding
+** TODO create an interview
