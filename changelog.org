@@ -4,32 +4,52 @@
 CLOSED: [2016-10-26 Wed 08:20]
 Spock looks like the easier to understand, although changed my mind because Servant looks more interesting for APIs.
 
-** Which templating library? Lucid, Heist, blaze-html, hamlet?
+** DONE Which templating library? Lucid, Heist, blaze-html, hamlet?
+CLOSED: [2016-10-27 Thu 08:20]
 I'll start with Lucid, although no big opinion on that.
 https://github.com/haskell-servant/servant/issues/297
 
-** Servant and static files
+** DONE Servant and blaze
+CLOSED: [2016-10-27 Thu 08:20]
+https://github.com/haskell-servant/servant/issues/195#issuecomment-132141660
 
-** Hello World with servant
+** DONE Hello World with servant
+CLOSED: [2016-10-27 Thu 08:18]
 https://github.com/mietek/hello-servant/blob/master/Main.hs
 
-** DB library
+** TODO DB library
 It looks like Persistent would be a good starting point. There is also an example http://www.parsonsmatt.org/2015/06/07/servant-persistent.html
 
-** TODO deploy to heroku
-https://haskellonheroku.com/tutorial/
-
-
-** TODO how to server static content
+** DONE how to server static content
+CLOSED: [2016-10-27 Thu 08:18]
 serveDirectory https://haskell-servant.github.io/tutorial/0.4/server.html
 or nginx?
 
-** TODO auto reload files?
-** TODO HTTPS?
-** TODO CSS
 
 
 * Features
 ** TODO signup
 ** TODO start coding
 ** TODO create an interview
+** TODO / -> index.html, /create/ -> create.html
+** TODO save and invite candidates
+
+
+* to check
+** TODO elm UI + servant API
+** TODO purescript + servant API
+** TODO servant web sockets
+** TODO auto reload files?
+** TODO HTTPS?
+** TODO CSS
+** TODO deploy to heroku
+https://haskellonheroku.com/tutorial/
+** TODO how to do redirections
+wai app? or servant and setting the Header location field.
+** TODO CSRF tokens?
+** TODO servant as a web micro framework? If not, what would be the best companion? Yesod not so micro? Wai directly?** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API
+** TODO urlencoded body
+** TODO dynamic parameters? can these be omitted?
+** TODO list of elements in form body (arrays in PHP)
+** TODO Generics extension
+
