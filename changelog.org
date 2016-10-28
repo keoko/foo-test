@@ -52,4 +52,14 @@ wai app? or servant and setting the Header location field.
 ** TODO dynamic parameters? can these be omitted?
 ** TODO list of elements in form body (arrays in PHP)
 ** TODO Generics extension
+** TODO digestive functors
+
+
+* Observations
+** Missing examples: UrlFormToEncode
+** Sometimes cryptic error messages. Not clear where is the issue in the API
+* Links
+** Example servant + acidstate: Latexpad
+https://github.com/alvare/latexpad
+https://github.com/haskell-servant/servant/issues/236
 

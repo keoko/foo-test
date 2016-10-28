@@ -1,7 +1,6 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
-
+{-# LANGUAGE OverloadedStrings #-}
 module Lib
   ( startApp
   ) where
@@ -13,26 +12,77 @@ import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
 import Servant.HTML.Blaze
 import Text.Blaze.Html5 (p, Html)
+import Control.Applicative
+import Data.Aeson
+import Data.Monoid
 
+-- data CheckRequest = CheckRequest { code :: Text }
+-- data CheckResult = Correct | Wrong
 
-type API = Get '[JSON] Text
-  :<|> "create" :> Get '[HTML] Html
-  :<|> "create" :> Post '[HTML] Html
+-- checkCode (CheckRequest code) = if code == "secret" then (p "correct") else (p "wrong")
+  
+
+type API = "login" :> ReqBody '[FormUrlEncoded] User :> Post '[JSON] Login
   :<|> Raw
 
+data Login = LoggedIn | NotLoggedIn
+  deriving (Eq, Show)
+
+instance ToJSON Login where
+  toJSON = toJSON . show
+
+data User = User
+  { email :: Text
+  , password :: Text
+  } deriving (Eq, Show)
+
+instance FromFormUrlEncoded User where
+  fromFormUrlEncoded inputs =
+    User <$> lkp "email" <*> lkp "password"
+
+    where lkp input_label = case lookup input_label inputs of
+                 Nothing -> Left $ unpack $ "label " <> input_label <> " not found"
+                 Just v    -> Right v
+
 server :: Server API
-server = return "hello world!!!"
-  :<|> createPageHandler
-  :<|> createPostHandler
+server =
+  serveUser
   :<|> serveDirectory "web"
 
-createPageHandler = return page
-  where page :: Html
-        page = p "hello"
 
-createPostHandler = return page
-  where page :: Html
-        page = p "create post handler"
+serveUser usr =
+  (if email usr == "admin@admin.com" && password usr == "1234"
+   then return LoggedIn
+   else return NotLoggedIn)
+
+
+
+-- instance FromFormUrlEncoded CheckRequest where
+--   --fromFormUrlEncoded :: [(Text, Text)] -> Either String CheckRequest
+--   fromFormUrlEncoded [("code", c)] = Right (CheckRequest c)
+--   fromFormUrlEncoded _             = Left "expected a single field `code`"
+
+-- type API = Get '[JSON] Text
+--   :<|> "create" :> Get '[HTML] Html
+--   :<|> "create" :> Post '[HTML] Html
+--   :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
+--   :<|> Raw
+
+-- server :: Server API
+-- server = return "hello world!!!"
+--   :<|> createPageHandler
+--   :<|> createPostHandler
+--   :<|> checkCode
+--   :<|> serveDirectory "web"
+
+
+-- createPageHandler = return page
+--   where page :: Html
+--         page = p "hello"
+
+-- createPostHandler = return page
+--   where page :: Html
+--         page = p "create post handler"
 
 api :: Proxy API
 api = Proxy
