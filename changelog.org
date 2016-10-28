@@ -56,7 +56,7 @@ wai app? or servant and setting the Header location field.
 
 
 * Observations
-** Missing examples: UrlFormToEncode
+** Missing examples: FormUrlEncoded
 ** Sometimes cryptic error messages. Not clear where is the issue in the API
 * Links
 ** Example servant + acidstate: Latexpad

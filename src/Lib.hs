@@ -16,13 +16,17 @@ import Control.Applicative
 import Data.Aeson
 import Data.Monoid
 
--- data CheckRequest = CheckRequest { code :: Text }
--- data CheckResult = Correct | Wrong
+data CheckRequest = CheckRequest { code :: Text }
+data CheckResult = Correct | Wrong
 
--- checkCode (CheckRequest code) = if code == "secret" then (p "correct") else (p "wrong")
-  
+checkCode (CheckRequest code) =
+  if code == "secret"
+  then return $ p "correct"
+  else return $ p "wrong"
 
-type API = "login" :> ReqBody '[FormUrlEncoded] User :> Post '[JSON] Login
+
+type API = "login" :> ReqBody '[FormUrlEncoded] User :> Post '[HTML] Html
+  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
   :<|> Raw
 
 data Login = LoggedIn | NotLoggedIn
@@ -47,20 +51,21 @@ instance FromFormUrlEncoded User where
 server :: Server API
 server =
   serveUser
+  :<|> checkCode
   :<|> serveDirectory "web"
 
 
 serveUser usr =
   (if email usr == "admin@admin.com" && password usr == "1234"
-   then return LoggedIn
-   else return NotLoggedIn)
+   then return $ p "logged in!!!!!"
+   else return $ p "not logged in!!!!")
 
 
 
--- instance FromFormUrlEncoded CheckRequest where
---   --fromFormUrlEncoded :: [(Text, Text)] -> Either String CheckRequest
---   fromFormUrlEncoded [("code", c)] = Right (CheckRequest c)
---   fromFormUrlEncoded _             = Left "expected a single field `code`"
+instance FromFormUrlEncoded CheckRequest where
+  --fromFormUrlEncoded :: [(Text, Text)] -> Either String CheckRequest
+  fromFormUrlEncoded [("code", c)] = Right (CheckRequest c)
+  fromFormUrlEncoded _             = Left "expected a single field `code`"
 
 -- type API = Get '[JSON] Text
 --   :<|> "create" :> Get '[HTML] Html
