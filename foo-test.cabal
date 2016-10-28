@@ -17,14 +17,6 @@ library
   hs-source-dirs:      src
   exposed-modules:     Lib
   build-depends:       base >= 4.7 && < 5
-  default-language:    Haskell2010
-
-executable foo-test-exe
-  hs-source-dirs:      app
-  main-is:             Main.hs
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
-  build-depends:       base
-                     , foo-test
                      , warp
                      , servant-server
                      , servant-blaze
@@ -33,6 +25,14 @@ executable foo-test-exe
                      , mtl
                      , text
                      , lucid
+  default-language:    Haskell2010
+
+executable foo-test-exe
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , foo-test
   default-language:    Haskell2010
 
 test-suite foo-test-test
