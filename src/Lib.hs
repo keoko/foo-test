@@ -9,6 +9,7 @@ module Lib
 import Data.Proxy
 import Data.Text
 import Network.Wai.Handler.Warp
+import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
 import Servant.HTML.Blaze
 import Text.Blaze.Html5 (p, Html)
@@ -19,8 +20,8 @@ type API = Get '[JSON] Text
   :<|> "create" :> Post '[HTML] Html
   :<|> Raw
 
-apiHandler :: Server API
-apiHandler = return "hello world!!!"
+server :: Server API
+server = return "hello world!!!"
   :<|> createPageHandler
   :<|> createPostHandler
   :<|> serveDirectory "web"
@@ -33,8 +34,11 @@ createPostHandler = return page
   where page :: Html
         page = p "create post handler"
 
-proxy :: Proxy API
-proxy = Proxy
+api :: Proxy API
+api = Proxy
+
+app :: Application
+app = serve api server
 
 startApp :: Int -> IO ()
-startApp port = run port $ serve proxy apiHandler
+startApp port = run port (logStdoutDev app)
