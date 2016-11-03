@@ -105,8 +105,11 @@ createPageHandler = return page
 --   where page :: Html
 --         page = p "create post handler"
 
+-- createPostHandler =
+--   returnFile "web/dashboard.html"
+
 createPostHandler =
-  returnFile "web/dashboard.html"
+  throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
 
 api :: Proxy API
 api = Proxy
