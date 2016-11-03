@@ -1,12 +1,14 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 module Lib
   ( startApp
   ) where
 
 import Data.Proxy
-import Data.Text
+import Data.Text 
+import Data.ByteString.Lazy as BS (ByteString, readFile)
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
@@ -15,19 +17,11 @@ import Text.Blaze.Html5 (p, Html)
 import Control.Applicative
 import Data.Aeson
 import Data.Monoid
+import Control.Monad.Trans.Either
+import Control.Monad.IO.Class
 
 data CheckRequest = CheckRequest { code :: Text }
 data CheckResult = Correct | Wrong
-
-checkCode (CheckRequest code) =
-  if code == "secret"
-  then return $ p "correct"
-  else return $ p "wrong"
-
-
-type API = "login" :> ReqBody '[FormUrlEncoded] User :> Post '[HTML] Html
-  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
-  :<|> Raw
 
 data Login = LoggedIn | NotLoggedIn
   deriving (Eq, Show)
@@ -48,11 +42,10 @@ instance FromFormUrlEncoded User where
                  Nothing -> Left $ unpack $ "label " <> input_label <> " not found"
                  Just v    -> Right v
 
-server :: Server API
-server =
-  serveUser
-  :<|> checkCode
-  :<|> serveDirectory "web"
+checkCode (CheckRequest code) =
+  if code == "secret"
+  then return $ p "correct"
+  else return $ p "wrong"
 
 
 serveUser usr =
@@ -67,27 +60,53 @@ instance FromFormUrlEncoded CheckRequest where
   fromFormUrlEncoded [("code", c)] = Right (CheckRequest c)
   fromFormUrlEncoded _             = Left "expected a single field `code`"
 
--- type API = Get '[JSON] Text
---   :<|> "create" :> Get '[HTML] Html
---   :<|> "create" :> Post '[HTML] Html
+
+
+-- type API = "login" :> ReqBody '[FormUrlEncoded] User :> Post '[HTML] Html
 --   :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
 --   :<|> Raw
 
+type API = Get '[JSON] Text
+  :<|> "create" :> Get '[HTML] Html
+  :<|> "create" :> Post '[HTML] RawHtml
+  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
+  :<|> Raw
+
+
 -- server :: Server API
--- server = return "hello world!!!"
---   :<|> createPageHandler
---   :<|> createPostHandler
+-- server =
+--   serveUser
 --   :<|> checkCode
 --   :<|> serveDirectory "web"
 
+newtype RawHtml = RawHtml { unRaw :: ByteString }
 
--- createPageHandler = return page
---   where page :: Html
---         page = p "hello"
+-- tell Servant how to render the newtype to html page, in this case simply unwrap it
+instance MimeRender HTML RawHtml where
+    mimeRender _ =  unRaw
 
--- createPostHandler = return page
+returnFile fileName =
+    fmap RawHtml (liftIO $  BS.readFile fileName)
+
+
+server :: Server API
+server = return "hello world!!!"
+  :<|> createPageHandler
+  :<|> createPostHandler
+  :<|> checkCode
+  :<|> serveDirectory "web"
+
+
+createPageHandler = return page
+  where page :: Html
+        page = p "hello"
+
+-- createPostHandler _ = return page
 --   where page :: Html
 --         page = p "create post handler"
+
+createPostHandler =
+  returnFile "web/dashboard.html"
 
 api :: Proxy API
 api = Proxy
