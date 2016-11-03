@@ -58,6 +58,7 @@ wai app? or servant and setting the Header location field.
 * Observations
 ** Missing examples: FormUrlEncoded
 ** Sometimes cryptic error messages. Not clear where is the issue in the API
+** Compile - Run - Browser loop is a bit slow
 * Links
 ** Example servant + acidstate: Latexpad
 https://github.com/alvare/latexpad

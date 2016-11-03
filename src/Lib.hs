@@ -7,13 +7,13 @@ module Lib
   ) where
 
 import Data.Proxy
-import Data.Text 
+import Data.Text hiding (head)
 import Data.ByteString.Lazy as BS (ByteString, readFile)
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
 import Servant.HTML.Blaze
-import Text.Blaze.Html5 (p, Html)
+import Text.Blaze.Html5 (p, Html, toHtml)
 import Control.Applicative
 import Data.Aeson
 import Data.Monoid
@@ -22,6 +22,24 @@ import Control.Monad.IO.Class
 
 data CheckRequest = CheckRequest { code :: Text }
 data CheckResult = Correct | Wrong
+
+instance FromFormUrlEncoded CheckRequest where
+  --fromFormUrlEncoded :: [(Text, Text)] -> Either String CheckRequest
+  fromFormUrlEncoded [("code", c)] = Right (CheckRequest c)
+  fromFormUrlEncoded _             = Left "expected a single field `code`"
+
+data CreateInterviewRequest = CreateInterviewRequest
+  { questions :: [String]
+  , initialForm :: Int
+  , maxNumForms :: Int
+  , minNumForms :: Int
+  , totalForms :: Int
+  }
+
+
+instance FromFormUrlEncoded CreateInterviewRequest where
+  fromFormUrlEncoded inputs =
+    Right $ CreateInterviewRequest ["a", "b"] 0 10 0 3
 
 data Login = LoggedIn | NotLoggedIn
   deriving (Eq, Show)
@@ -54,21 +72,13 @@ serveUser usr =
    else return $ p "not logged in!!!!")
 
 
-
-instance FromFormUrlEncoded CheckRequest where
-  --fromFormUrlEncoded :: [(Text, Text)] -> Either String CheckRequest
-  fromFormUrlEncoded [("code", c)] = Right (CheckRequest c)
-  fromFormUrlEncoded _             = Left "expected a single field `code`"
-
-
-
 -- type API = "login" :> ReqBody '[FormUrlEncoded] User :> Post '[HTML] Html
 --   :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
 --   :<|> Raw
 
 type API = Get '[JSON] Text
   :<|> "create" :> Get '[HTML] Html
-  :<|> "create" :> Post '[HTML] RawHtml
+  :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[HTML] Html
   :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
   :<|> Raw
 
@@ -108,8 +118,12 @@ createPageHandler = return page
 -- createPostHandler =
 --   returnFile "web/dashboard.html"
 
-createPostHandler =
-  throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
+-- createPostHandler =
+--   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
+
+createPostHandler createInterviewRequest = return page
+  where page :: Html
+        page = p $ toHtml $ head $ questions createInterviewRequest
 
 api :: Proxy API
 api = Proxy
