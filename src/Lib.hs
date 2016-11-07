@@ -8,7 +8,7 @@ module Lib
  ) where
 
 import Data.Proxy
-import Data.Text hiding (head, map, filter, null)
+import Data.Text hiding (head, map, filter, null, tail)
 import Data.ByteString.Lazy as BS (ByteString, readFile)
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
@@ -31,32 +31,32 @@ import Data.List (sortOn)
 --   fromFormUrlEncoded [("code", c)] = Right (CheckRequest c)
 --   fromFormUrlEncoded _             = Left "expected a single field `code`"
 
--- data CreateInterviewRequest = CreateInterviewRequest
---   { questions :: [String]
---   , initialForm :: Int
---   , maxNumForms :: Int
---   , minNumForms :: Int
---   , totalForms :: Int
---   }
+data CreateInterviewRequest = CreateInterviewRequest
+  { questions :: [String]
+  , initialForm :: Int
+  , maxNumForms :: Int
+  , minNumForms :: Int
+  , totalForms :: Int
+  }
 
 
-decodeInterviewQuestions :: [(String, String)]-> [String]
+decodeInterviewQuestions :: [(Text, Text)]-> [String]
 decodeInterviewQuestions xs = getQuestionSentences . sortByIndex . filterQuestions $ map extractQuestionNumber xs
   where
     getQuestionSentences = map snd
     sortByIndex = sortOn (\(x,_) -> read ((head x) !! 1) :: Int)
     filterQuestions = filter (not . null . fst)
-    extractQuestionNumber (k, v) = (((k :: String) =~ ("question-([0-9]+)-content" :: String)) :: [[String]], v) 
+    extractQuestionNumber (k, v) = ((((unpack k) :: String) =~ ("question-([0-9]+)-content" :: String)) :: [[String]], (unpack v)) 
 
 
--- instance FromFormUrlEncoded CreateInterviewRequest where
---   fromFormUrlEncoded inputs =
---     Right $ CreateInterviewRequest ["a", "b"]  (lkp "question-INITIAL_FORMS") (lkp "question-MAX_NUM_FORMS") (lkp "question-MIN_NUM_FORMS") (lkp "question-TOTAL_FORMS")
+instance FromFormUrlEncoded CreateInterviewRequest where
+  fromFormUrlEncoded inputs =
+    Right $ CreateInterviewRequest questions (lkp "question-INITIAL_FORMS") (lkp "question-MAX_NUM_FORMS") (lkp "question-MIN_NUM_FORMS") (lkp "question-TOTAL_FORMS")
 
---     where lkp input_label = case lookup input_label inputs of
---                  Nothing -> 0
---                  Just v    -> read (unpack v) :: Int
---     --       questions = decodeInterviewQuestions inputs
+    where lkp input_label = case lookup input_label inputs of
+                 Nothing -> 0
+                 Just v    -> read (unpack v) :: Int
+          questions = decodeInterviewQuestions inputs
 
 -- data Login = LoggedIn | NotLoggedIn
 --   deriving (Eq, Show)
@@ -93,12 +93,6 @@ decodeInterviewQuestions xs = getQuestionSentences . sortByIndex . filterQuestio
 -- --   :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
 -- --   :<|> Raw
 
-type API = Get '[JSON] Text
---   :<|> "create" :> Get '[HTML] Html
---   :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[HTML] Html
---   :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
---   :<|> Raw
-
 
 -- -- server :: Server API
 -- -- server =
@@ -115,32 +109,38 @@ type API = Get '[JSON] Text
 -- returnFile fileName =
 --     fmap RawHtml (liftIO $  BS.readFile fileName)
 
+type API = Get '[JSON] Text
+  :<|> "create" :> Get '[HTML] Html
+  :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[HTML] Html
+--  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
+  :<|> Raw
+
 
 server :: Server API
 server = return "hello world!!!"
---   :<|> createPageHandler
---   :<|> createPostHandler
---   :<|> checkCode
---   :<|> serveDirectory "web"
+   :<|> createPageHandler
+   :<|> createPostHandler
+ --  :<|> checkCode
+   :<|> serveDirectory "web"
 
 
--- createPageHandler = return page
+createPageHandler = return page
+  where page :: Html
+        page = p "hello"
+
+-- createPostHandler _ = return page
 --   where page :: Html
---         page = p "hello"
+--         page = p "create post handler"
 
--- -- createPostHandler _ = return page
--- --   where page :: Html
--- --         page = p "create post handler"
+-- createPostHandler =
+--   returnFile "web/dashboard.html"
 
--- -- createPostHandler =
--- --   returnFile "web/dashboard.html"
+-- createPostHandler =
+--   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
 
--- -- createPostHandler =
--- --   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
-
--- createPostHandler createInterviewRequest = return page
---   where page :: Html
---         page = p $ toHtml $ head $ questions createInterviewRequest
+createPostHandler createInterviewRequest = return page
+  where page :: Html
+        page = p $ toHtml $ head $ tail $ questions createInterviewRequest
 
 api :: Proxy API
 api = Proxy
@@ -150,4 +150,3 @@ app = serve api server
 
 startApp :: Int -> IO ()
 startApp port = run port (logStdoutDev app)
-

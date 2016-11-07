@@ -87,6 +87,8 @@ Manual parsing I guess.
 ** Missing examples: FormUrlEncoded
 ** Sometimes cryptic error messages. Not clear where is the issue in the API
 ** Compile - Run - Browser loop is a bit slow
+** RegExp issues with ambiguous types
+** What to use? String, Text or ByteString? (pack, unpack)?
 * Links
 ** Example servant + acidstate: Latexpad
 https://github.com/alvare/latexpad
