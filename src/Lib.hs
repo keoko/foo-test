@@ -36,22 +36,19 @@ import Data.Aeson
 import Database.Persist.TH
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-User
+Interview
   name Text
-  age  Int
   UniqueName name
   deriving Eq Read Show
 |]
 
-instance FromJSON User where
-  parseJSON = withObject "User" $ \ v ->
-    User <$> v .: "name"
-         <*> v .: "age"
+instance FromJSON Interview where
+  parseJSON = withObject "Interview" $ \ v ->
+    Interview <$> v .: "name"
 
-instance ToJSON User where
-  toJSON (User name age) =
-    object [ "name" .= name
-           , "age"  .= age  ]
+instance ToJSON Interview where
+  toJSON (Interview name) =
+    object [ "name" .= name ]
 
 -- data CheckRequest = CheckRequest { code :: Text }
 -- data CheckResult = Correct | Wrong
@@ -140,7 +137,7 @@ instance FromFormUrlEncoded CreateInterviewRequest where
 --     fmap RawHtml (liftIO $  BS.readFile fileName)
 
 type API = Get '[JSON] Text
-  :<|> "create" :> Get '[JSON] (Key User)
+  :<|> "create" :> Get '[JSON] (Key Interview)
   :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[HTML] Html
 --  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
   :<|> Raw
@@ -154,11 +151,11 @@ server pool = return "hello world!!!"
    :<|> serveDirectory "web"
 
 
-createPageHandler pool = liftIO $ userAdd
+createPageHandler pool = liftIO $ interviewAdd
   where
-    userAdd :: IO (Key User)
-    userAdd = flip runSqlPersistMPool pool $ do
-      insert $ User "pepe" 10
+    interviewAdd :: IO (Key Interview)
+    interviewAdd = flip runSqlPersistMPool pool $ do
+      insert $ Interview "pepe"
 
   --runSqlPersistMPool (insert $ User "pepe" 10) pool
 
