@@ -29,6 +29,8 @@ library
                      , aeson
                      , either
                      , bytestring
+                     , regex-pcre
+                     , strings
   default-language:    Haskell2010
 
 executable foo-test-exe

@@ -4,3 +4,4 @@ packages:
 extra-deps: 
   - warp-3.2.8
   - servant-server-0.8.1
+  - strings-1.1
