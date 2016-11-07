@@ -15,7 +15,7 @@ module Lib
  ) where
 
 import Data.Proxy
-import Data.Text (Text, unpack)
+import Data.Text (Text, unpack, pack)
 import Data.ByteString.Lazy as BS (ByteString, readFile)
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
@@ -39,6 +39,11 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Interview
   name Text
   UniqueName name
+  deriving Eq Read Show
+Question
+  interviewId InterviewId
+  position Int
+  content Text
   deriving Eq Read Show
 |]
 
@@ -138,7 +143,7 @@ instance FromFormUrlEncoded CreateInterviewRequest where
 
 type API = Get '[JSON] Text
   :<|> "create" :> Get '[JSON] (Key Interview)
-  :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[HTML] Html
+  :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[JSON] (Key Interview)
 --  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
   :<|> Raw
 
@@ -146,7 +151,7 @@ type API = Get '[JSON] Text
 server :: ConnectionPool -> Server API
 server pool = return "hello world!!!"
    :<|> createPageHandler pool
-   :<|> createPostHandler
+   :<|> createPostHandler pool
  --  :<|> checkCode
    :<|> serveDirectory "web"
 
@@ -169,9 +174,17 @@ createPageHandler pool = liftIO $ interviewAdd
 -- createPostHandler =
 --   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
 
-createPostHandler createInterviewRequest = return page
+-- todo
+-- 1. create new interview
+-- 2. redirect to the new interview
+createPostHandler pool createInterviewRequest = liftIO $ createInterview
   where page :: Html
         page = p $ toHtml $ head $ tail $ questions createInterviewRequest
+        createInterview :: IO (Key Interview)
+        createInterview = flip runSqlPersistMPool pool $ do
+          interview <- insert $ Interview "pepe123"
+          insertMany $ map (\(interviewId,position,content) -> Question interviewId position (pack content)) $ zip3 (repeat interview) [1..] (questions createInterviewRequest)
+          return interview
 
 api :: Proxy API
 api = Proxy
