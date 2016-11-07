@@ -2,13 +2,20 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE FlexibleContexts #-}
-module Lib 
- ( startApp
+{-# LANGUAGE EmptyDataDecls             #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE GADTs                      #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE QuasiQuotes                #-}
+{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE TypeFamilies               #-}
+
+module Lib
+ ( startApp, migrateAll
  ) where
 
 import Data.Proxy
-import Data.Text hiding (head, map, filter, null, tail)
+import Data.Text (Text, unpack)
 import Data.ByteString.Lazy as BS (ByteString, readFile)
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
@@ -22,6 +29,29 @@ import Control.Monad.Trans.Either
 import Control.Monad.IO.Class
 import Text.Regex.PCRE
 import Data.List (sortOn)
+import Database.Persist
+import Database.Persist.Sql
+import Data.Aeson
+
+import Database.Persist.TH
+
+share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
+User
+  name Text
+  age  Int
+  UniqueName name
+  deriving Eq Read Show
+|]
+
+instance FromJSON User where
+  parseJSON = withObject "User" $ \ v ->
+    User <$> v .: "name"
+         <*> v .: "age"
+
+instance ToJSON User where
+  toJSON (User name age) =
+    object [ "name" .= name
+           , "age"  .= age  ]
 
 -- data CheckRequest = CheckRequest { code :: Text }
 -- data CheckResult = Correct | Wrong
@@ -110,23 +140,27 @@ instance FromFormUrlEncoded CreateInterviewRequest where
 --     fmap RawHtml (liftIO $  BS.readFile fileName)
 
 type API = Get '[JSON] Text
-  :<|> "create" :> Get '[HTML] Html
+  :<|> "create" :> Get '[JSON] (Key User)
   :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[HTML] Html
 --  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
   :<|> Raw
 
 
-server :: Server API
-server = return "hello world!!!"
-   :<|> createPageHandler
+server :: ConnectionPool -> Server API
+server pool = return "hello world!!!"
+   :<|> createPageHandler pool
    :<|> createPostHandler
  --  :<|> checkCode
    :<|> serveDirectory "web"
 
 
-createPageHandler = return page
-  where page :: Html
-        page = p "hello"
+createPageHandler pool = liftIO $ userAdd
+  where
+    userAdd :: IO (Key User)
+    userAdd = flip runSqlPersistMPool pool $ do
+      insert $ User "pepe" 10
+
+  --runSqlPersistMPool (insert $ User "pepe" 10) pool
 
 -- createPostHandler _ = return page
 --   where page :: Html
@@ -145,8 +179,8 @@ createPostHandler createInterviewRequest = return page
 api :: Proxy API
 api = Proxy
 
-app :: Application
-app = serve api server
+app :: ConnectionPool -> Application
+app pool = serve api $ server pool
 
-startApp :: Int -> IO ()
-startApp port = run port (logStdoutDev app)
+startApp :: Int -> ConnectionPool -> IO ()
+startApp port pool = run port (logStdoutDev $ app pool)

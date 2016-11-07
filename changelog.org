@@ -32,8 +32,13 @@ or nginx?
 ** TODO start coding
 ** TODO create an interview
 ** TODO / -> index.html, /create/ -> create.html
-** TODO save and invite candidates
+** TODO save and invite candidateso
 
+
+
+
+
+** TODO create dashboard
 
 * to check
 ** TODO elm UI + servant API
