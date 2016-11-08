@@ -1,6 +1,6 @@
 module Main where
 
-import Lib (startApp, migrateAll)
+import App (startApp, migrateAll)
 import           Control.Monad.Logger (runStderrLoggingT)
 import           Database.Persist
 import           Database.Persist.Sql

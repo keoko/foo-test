@@ -9,11 +9,9 @@ import           Database.Persist (Entity)
 import           Models           (Interview, InterviewId)
 import           Servant.API      ((:<|>), (:>), Capture, Delete, Get, JSON,
                                    NoContent, Post, Put, ReqBody)
-type Api = -- Get '[JSON] Text
-  "create" :> Get '[JSON] InterviewId
-  -- :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[JSON] (Key Interview)
---  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
---  :<|> Raw
+type Api =
+  "interview" :> Capture "id" InterviewId
+              :> Get '[JSON] (Maybe (Entity Interview))
 
 api :: Proxy Api
 api = Proxy
