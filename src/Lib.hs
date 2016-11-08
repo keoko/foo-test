@@ -32,6 +32,9 @@ import Data.List (sortOn)
 import Database.Persist
 import Database.Persist.Sql
 import Data.Aeson
+import System.Random
+import System.IO.Unsafe
+
 
 import Database.Persist.TH
 
@@ -174,6 +177,9 @@ createPageHandler pool = liftIO $ interviewAdd
 -- createPostHandler =
 --   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
 
+newCode =
+  pack $ take 10 $ randomRs ('a','z') $ unsafePerformIO newStdGen
+
 -- todo
 -- 1. create new interview
 -- 2. redirect to the new interview
@@ -182,7 +188,7 @@ createPostHandler pool createInterviewRequest = liftIO $ createInterview
         page = p $ toHtml $ head $ tail $ questions createInterviewRequest
         createInterview :: IO (Key Interview)
         createInterview = flip runSqlPersistMPool pool $ do
-          interview <- insert $ Interview "pepe123"
+          interview <- insert $ Interview $ newCode
           insertMany $ map (\(interviewId,position,content) -> Question interviewId position (pack content)) $ zip3 (repeat interview) [1..] (questions createInterviewRequest)
           return interview
 
