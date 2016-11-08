@@ -12,6 +12,8 @@ import           Servant.API      ((:<|>), (:>), Capture, Delete, Get, JSON,
 type Api =
   "interview" :> Capture "id" InterviewId
               :> Get '[JSON] (Maybe (Entity Interview))
+  :<|> "interview" :> Capture "id" InterviewId
+              :> Delete '[JSON] NoContent
 
 api :: Proxy Api
 api = Proxy
