@@ -46,8 +46,6 @@ import Database.Persist.Sqlite
 server :: ConnectionPool -> Server Api
 server pool = getInterview pool :<|> deleteInterview pool
 
-
-
 getInterview pool interviewId = liftIO $
   runSqlPersistMPool (selectFirst [InterviewId ==. interviewId] []) pool
 
@@ -55,34 +53,11 @@ deleteInterview pool interviewId = liftIO $ do
   runSqlPersistMPool (delete interviewId) pool
   return NoContent
 
-  --runSqlPersistMPool (insert $ User "pepe" 10) pool
-
--- createPostHandler _ = return page
---   where page :: Html
---         page = p "create post handler"
-
--- createPostHandler =
---   returnFile "web/dashboard.html"
-
 -- createPostHandler =
 --   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
 
 newCode =
   take 10 $ randomRs ('a','z') $ unsafePerformIO newStdGen
-
--- todo
--- 1. create new interview
--- 2. redirect to the new interview
--- createPostHandler pool createInterviewRequest = liftIO createInterview
-  -- --throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
-  -- where page :: Html
-        -- page = p $ toHtml $ head $ tail $ questions createInterviewRequest
-        -- createInterview :: IO (Key Interview)
-        -- createInterview = flip runSqlPersistMPool pool $ do
-          -- let interviewCode = newCode
-          -- interview <- insert $ Interview $ T.pack interviewCode
-          -- insertMany $ map (\(interviewId,position,content) -> Question interviewId position (T.pack content)) $ zip3 (repeat interview) [1..] (questions createInterviewRequest)
-          -- return interview
 
 app :: ConnectionPool -> Application
 app pool = serve api $ server pool
