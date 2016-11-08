@@ -16,9 +16,12 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Lib
+  other-modules:       Api
+                     , Models
   build-depends:       base >= 4.7 && < 5
                      , warp
                      , wai-extra
+                     , servant
                      , servant-server
                      , servant-blaze
                      , blaze-html

@@ -86,6 +86,7 @@ Manual parsing I guess.
 ** TODO servant as a web micro framework? If not, what would be the best companion? Yesod not so micro? Wai directly?** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API
 ** TODO Auth
 ** TODO Servant template (logging, auth, monitoring, etc.)
+** TODO generating safe random number inside a do block
 
 
 * Observations

@@ -14,9 +14,12 @@ module Lib
  ( startApp, migrateAll
  ) where
 
+import Api (Api, api)
+import Models
 import Data.Proxy
-import Data.Text (Text, unpack, pack)
-import Data.ByteString.Lazy as BS (ByteString, readFile)
+import Data.Text as T (Text, unpack, pack)
+import Data.ByteString as BS (pack, unpack, ByteString)
+-- import Data.ByteString.Lazy as BS (ByteString, readFile, pack, unpack)
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
@@ -38,25 +41,6 @@ import System.IO.Unsafe
 
 import Database.Persist.TH
 
-share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-Interview
-  name Text
-  UniqueName name
-  deriving Eq Read Show
-Question
-  interviewId InterviewId
-  position Int
-  content Text
-  deriving Eq Read Show
-|]
-
-instance FromJSON Interview where
-  parseJSON = withObject "Interview" $ \ v ->
-    Interview <$> v .: "name"
-
-instance ToJSON Interview where
-  toJSON (Interview name) =
-    object [ "name" .= name ]
 
 -- data CheckRequest = CheckRequest { code :: Text }
 -- data CheckResult = Correct | Wrong
@@ -81,7 +65,7 @@ decodeInterviewQuestions xs = getQuestionSentences . sortByIndex . filterQuestio
     getQuestionSentences = map snd
     sortByIndex = sortOn (\(x,_) -> read ((head x) !! 1) :: Int)
     filterQuestions = filter (not . null . fst)
-    extractQuestionNumber (k, v) = ((((unpack k) :: String) =~ ("question-([0-9]+)-content" :: String)) :: [[String]], (unpack v)) 
+    extractQuestionNumber (k, v) = ((((T.unpack k) :: String) =~ ("question-([0-9]+)-content" :: String)) :: [[String]], (T.unpack v)) 
 
 
 instance FromFormUrlEncoded CreateInterviewRequest where
@@ -90,7 +74,7 @@ instance FromFormUrlEncoded CreateInterviewRequest where
 
     where lkp input_label = case lookup input_label inputs of
                  Nothing -> 0
-                 Just v    -> read (unpack v) :: Int
+                 Just v    -> read (T.unpack v) :: Int
           questions = decodeInterviewQuestions inputs
 
 -- data Login = LoggedIn | NotLoggedIn
@@ -144,19 +128,13 @@ instance FromFormUrlEncoded CreateInterviewRequest where
 -- returnFile fileName =
 --     fmap RawHtml (liftIO $  BS.readFile fileName)
 
-type API = Get '[JSON] Text
-  :<|> "create" :> Get '[JSON] (Key Interview)
-  :<|> "create" :> ReqBody '[FormUrlEncoded] CreateInterviewRequest :> Post '[JSON] (Key Interview)
---  :<|> "check" :> ReqBody '[FormUrlEncoded] CheckRequest :> Post '[HTML] Html
-  :<|> Raw
 
-
-server :: ConnectionPool -> Server API
-server pool = return "hello world!!!"
-   :<|> createPageHandler pool
-   :<|> createPostHandler pool
+server :: ConnectionPool -> Server Api
+server pool = -- return "hello world!!!"
+   createPageHandler pool
+--   :<|> createPostHandler pool
  --  :<|> checkCode
-   :<|> serveDirectory "web"
+ --  :<|> serveDirectory "web"
 
 
 createPageHandler pool = liftIO $ interviewAdd
@@ -178,22 +156,21 @@ createPageHandler pool = liftIO $ interviewAdd
 --   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
 
 newCode =
-  pack $ take 10 $ randomRs ('a','z') $ unsafePerformIO newStdGen
+  take 10 $ randomRs ('a','z') $ unsafePerformIO newStdGen
 
 -- todo
 -- 1. create new interview
 -- 2. redirect to the new interview
-createPostHandler pool createInterviewRequest = liftIO $ createInterview
-  where page :: Html
-        page = p $ toHtml $ head $ tail $ questions createInterviewRequest
-        createInterview :: IO (Key Interview)
-        createInterview = flip runSqlPersistMPool pool $ do
-          interview <- insert $ Interview $ newCode
-          insertMany $ map (\(interviewId,position,content) -> Question interviewId position (pack content)) $ zip3 (repeat interview) [1..] (questions createInterviewRequest)
-          return interview
-
-api :: Proxy API
-api = Proxy
+-- createPostHandler pool createInterviewRequest = liftIO createInterview
+  -- --throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
+  -- where page :: Html
+        -- page = p $ toHtml $ head $ tail $ questions createInterviewRequest
+        -- createInterview :: IO (Key Interview)
+        -- createInterview = flip runSqlPersistMPool pool $ do
+          -- let interviewCode = newCode
+          -- interview <- insert $ Interview $ T.pack interviewCode
+          -- insertMany $ map (\(interviewId,position,content) -> Question interviewId position (T.pack content)) $ zip3 (repeat interview) [1..] (questions createInterviewRequest)
+          -- return interview
 
 app :: ConnectionPool -> Application
 app pool = serve api $ server pool

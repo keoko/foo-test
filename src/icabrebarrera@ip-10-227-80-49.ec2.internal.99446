@@ -1,0 +1,35 @@
+{-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE GADTs                      #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE QuasiQuotes                #-}
+{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE TypeFamilies               #-}
+
+module Models where
+
+import           Database.Persist.TH (mkMigrate, mkPersist, persistLowerCase,
+                                      share, sqlSettings)
+import           GHC.Generics        (Generic)
+
+share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
+Interview
+  name Text
+  UniqueName name
+  deriving Eq Read Show
+Question
+  interviewId InterviewId
+  position Int
+  content Text
+  deriving Eq Read Show
+|]
+
+instance FromJSON Interview where
+  parseJSON = withObject "Interview" $ \ v ->
+    Interview <$> v .: "name"
+
+instance ToJSON Interview where
+  toJSON (Interview name) =
+    object [ "name" .= name ]
