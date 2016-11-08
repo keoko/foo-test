@@ -10,7 +10,7 @@
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
 
-module Lib
+module App
  ( startApp, migrateAll
  ) where
 
