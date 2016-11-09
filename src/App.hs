@@ -16,20 +16,25 @@ import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
 import Control.Monad.IO.Class
+import Control.Monad.Trans.Except
 import System.Random
 import System.IO.Unsafe
 import Database.Persist.Sqlite
 
 
+type HandlerResponse a = ExceptT ServantErr IO a
 
 server :: ConnectionPool -> Server Api
 server pool = getAllInterviews pool :<|> getInterview pool :<|> updateInterview pool :<|> deleteInterview pool
 
+getAllInterviews :: ConnectionPool -> HandlerResponse [Entity Interview]
 getAllInterviews pool = liftIO $
   runSqlPersistMPool (selectList [] []) pool
 
+getInterview :: ConnectionPool -> InterviewId -> HandlerResponse (Entity Interview)
 getInterview = getInterview'
 
+getInterview' :: ConnectionPool -> InterviewId -> HandlerResponse (Entity Interview)
 getInterview' pool interviewId = do
   maybeInterview <- liftIO $ runSqlPersistMPool (selectFirst [InterviewId ==. interviewId] []) pool
   case maybeInterview of
@@ -38,11 +43,13 @@ getInterview' pool interviewId = do
     Just interview ->
       return interview
 
+updateInterview :: ConnectionPool -> InterviewId -> Interview -> HandlerResponse NoContent
 updateInterview pool interviewId interview = do
   getInterview' pool interviewId
   liftIO $ runSqlPersistMPool (replace interviewId interview) pool
   return NoContent
 
+deleteInterview :: ConnectionPool -> InterviewId -> HandlerResponse NoContent
 deleteInterview pool interviewId = do
   getInterview' pool interviewId
   liftIO $ runSqlPersistMPool (delete interviewId) pool
@@ -51,8 +58,8 @@ deleteInterview pool interviewId = do
 -- createPostHandler =
 --   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
 
-newCode =
-  take 10 $ randomRs ('a','z') $ unsafePerformIO newStdGen
+-- newCode =
+--   take 10 $ randomRs ('a','z') $ unsafePerformIO newStdGen
 
 app :: ConnectionPool -> Application
 app pool = serve api $ server pool
