@@ -28,8 +28,13 @@ server pool = getAllInterviews pool :<|> getInterview pool :<|> updateInterview 
 getAllInterviews pool = liftIO $
   runSqlPersistMPool (selectList [] []) pool
 
-getInterview pool interviewId = liftIO $
-  runSqlPersistMPool (selectFirst [InterviewId ==. interviewId] []) pool
+getInterview pool interviewId = do
+  maybeInterview <- liftIO $ runSqlPersistMPool (selectFirst [InterviewId ==. interviewId] []) pool
+  case maybeInterview of
+    Nothing ->
+      throwError err404
+    Just interview ->
+      return interview
 
 updateInterview pool interviewId interview = liftIO $ do
   runSqlPersistMPool (replace interviewId interview) pool

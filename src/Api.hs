@@ -13,7 +13,7 @@ type Api =
   "interview"
               :> Get '[JSON] [Entity Interview]
   :<|> "interview" :> Capture "id" InterviewId
-              :> Get '[JSON] (Maybe (Entity Interview))
+              :> Get '[JSON] (Entity Interview)
   :<|> "interview" :> Capture "id" InterviewId
               :> ReqBody '[JSON] Interview
               :> Put '[JSON] NoContent
