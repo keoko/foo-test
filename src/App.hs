@@ -28,7 +28,10 @@ server pool = getAllInterviews pool :<|> getInterview pool :<|> updateInterview 
 getAllInterviews pool = liftIO $
   runSqlPersistMPool (selectList [] []) pool
 
-getInterview pool interviewId = do
+
+getInterview = getInterview'
+
+getInterview' pool interviewId = do
   maybeInterview <- liftIO $ runSqlPersistMPool (selectFirst [InterviewId ==. interviewId] []) pool
   case maybeInterview of
     Nothing ->
@@ -40,8 +43,9 @@ updateInterview pool interviewId interview = liftIO $ do
   runSqlPersistMPool (replace interviewId interview) pool
   return NoContent
 
-deleteInterview pool interviewId = liftIO $ do
-  runSqlPersistMPool (delete interviewId) pool
+deleteInterview pool interviewId = do
+  getInterview' pool interviewId
+  liftIO $ runSqlPersistMPool (delete interviewId) pool
   return NoContent
 
 -- createPostHandler =
