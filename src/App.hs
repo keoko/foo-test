@@ -44,7 +44,11 @@ import Database.Persist.Sqlite
 
 
 server :: ConnectionPool -> Server Api
-server pool = getInterview pool :<|> deleteInterview pool
+server pool = getAllInterviews pool :<|> getInterview pool :<|> deleteInterview pool
+
+
+getAllInterviews pool = liftIO $
+  runSqlPersistMPool (selectList [] []) pool
 
 getInterview pool interviewId = liftIO $
   runSqlPersistMPool (selectFirst [InterviewId ==. interviewId] []) pool
