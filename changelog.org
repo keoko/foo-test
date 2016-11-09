@@ -17,8 +17,10 @@ https://github.com/haskell-servant/servant/issues/195#issuecomment-132141660
 CLOSED: [2016-10-27 Thu 08:18]
 https://github.com/mietek/hello-servant/blob/master/Main.hs
 
-** TODO DB library
+** DONE DB library
+CLOSED: [2016-11-09 Wed 08:09]
 It looks like Persistent would be a good starting point. There is also an example http://www.parsonsmatt.org/2015/06/07/servant-persistent.html
+Other alternatives: opaleye and acid-state
 
 ** DONE how to server static content
 CLOSED: [2016-10-27 Thu 08:18]
@@ -26,8 +28,14 @@ serveDirectory https://haskell-servant.github.io/tutorial/0.4/server.html
 or nginx?
 
 
+** TODO basic CRUD API operations
+** TODO handle API error cases (entity not found)
+** TODO interview as a set of questions
+** TODO elm UI + servant API
 
 * Features
+** TODO testing
+** TODO swagger
 ** TODO signup
 ** TODO start coding
 ** TODO create an interview
@@ -41,7 +49,6 @@ or nginx?
 ** TODO create dashboard
 
 * to check
-** TODO elm UI + servant API
 ** TODO purescript + servant API
 ** TODO auto reload files?
 ** TODO deploy to heroku
@@ -86,7 +93,7 @@ Manual parsing I guess.
 ** TODO servant as a web micro framework? If not, what would be the best companion? Yesod not so micro? Wai directly?** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API** TODO purescript + servant API
 ** TODO Auth
 ** TODO Servant template (logging, auth, monitoring, etc.)
-** TODO generating safe random number inside a do block
+** TODO generating safe random number inside a do bloc
 
 
 * Observations
