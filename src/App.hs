@@ -28,7 +28,6 @@ server pool = getAllInterviews pool :<|> getInterview pool :<|> updateInterview 
 getAllInterviews pool = liftIO $
   runSqlPersistMPool (selectList [] []) pool
 
-
 getInterview = getInterview'
 
 getInterview' pool interviewId = do
@@ -39,8 +38,9 @@ getInterview' pool interviewId = do
     Just interview ->
       return interview
 
-updateInterview pool interviewId interview = liftIO $ do
-  runSqlPersistMPool (replace interviewId interview) pool
+updateInterview pool interviewId interview = do
+  getInterview' pool interviewId
+  liftIO $ runSqlPersistMPool (replace interviewId interview) pool
   return NoContent
 
 deleteInterview pool interviewId = do
