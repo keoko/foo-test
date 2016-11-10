@@ -26,7 +26,11 @@ import Database.Persist.Sqlite
 type HandlerResponse a = ExceptT ServantErr IO a
 
 server :: ConnectionPool -> Server Api
-server pool = getAllInterviews pool :<|> getInterview pool :<|> updateInterview pool :<|> deleteInterview pool
+server pool = getAllInterviews pool
+              :<|> getInterview pool
+              :<|> createInterview pool
+              :<|> updateInterview pool
+              :<|> deleteInterview pool
 
 getAllInterviews :: ConnectionPool -> HandlerResponse [Entity Interview]
 getAllInterviews pool = liftIO $
@@ -51,9 +55,18 @@ getInterview' pool interviewId = do
       return interview
 
 getQuestions :: ConnectionPool -> InterviewId -> IO [Entity Question]
-getQuestions pool interviewId = do
-  questions <- liftIO $ runSqlPersistMPool (selectList [QuestionInterviewId ==. interviewId] []) pool
-  return questions
+getQuestions pool interviewId = 
+  liftIO $ runSqlPersistMPool (selectList [QuestionInterviewId ==. interviewId] []) pool
+
+
+createInterview :: ConnectionPool -> InterviewWithQuestions -> HandlerResponse NoContent
+createInterview pool interviewWithQuestions = do
+  -- @todo check that interview does not exist
+  liftIO $ runSqlPersistMPool queries pool
+  return NoContent
+  where queries = do
+          interviewId <- insert $ Interview (name interviewWithQuestions)
+          insertQuestionQueries interviewId $ questions interviewWithQuestions
 
 updateInterview :: ConnectionPool -> InterviewId -> InterviewWithQuestions -> HandlerResponse NoContent
 updateInterview pool interviewId interviewWithQuestions = do
@@ -62,8 +75,8 @@ updateInterview pool interviewId interviewWithQuestions = do
   return NoContent
   where queries = do
           deleteWhere [QuestionInterviewId ==. interviewId]
-          mapM_ (\(p, q) -> insert $ Question interviewId p q) $ zip [1..] (questions interviewWithQuestions)
-          let interview' = Interview (name interviewWithQuestions)
+          insertQuestionQueries interviewId $ questions interviewWithQuestions
+          let interview' = Interview $ name interviewWithQuestions
           replace interviewId interview'
 
 
@@ -84,3 +97,8 @@ app pool = serve api $ server pool
 
 startApp :: Int -> ConnectionPool -> IO ()
 startApp port pool = run port (logStdoutDev $ app pool)
+
+
+-- Helper functions
+insertQuestionQueries interviewId questions =
+  mapM_ (\(p, q) -> insert $ Question interviewId p q) $ zip [1..] questions

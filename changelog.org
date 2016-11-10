@@ -99,6 +99,7 @@ Manual parsing I guess.
 ** TODO Auth
 ** TODO Servant template (logging, auth, monitoring, etc.)
 ** TODO generating safe random number inside a do bloc
+** TODO Esqueleto
 
 
 * Observations
