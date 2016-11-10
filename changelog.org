@@ -28,9 +28,13 @@ serveDirectory https://haskell-servant.github.io/tutorial/0.4/server.html
 or nginx?
 
 
-** TODO basic CRUD API operations
-** TODO handle API error cases (entity not found)
+** DONE basic CRUD API operations
+CLOSED: [2016-11-09 Wed 18:36]
+** DONE handle API error cases (entity not found)
+CLOSED: [2016-11-09 Wed 18:36]
 ** TODO interview as a set of questions
+** TODO interview application
+** TODO cascade remove (interview -> question)
 ** TODO elm UI + servant API
 
 * Features

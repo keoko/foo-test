@@ -31,8 +31,14 @@ getAllInterviews :: ConnectionPool -> HandlerResponse [Entity Interview]
 getAllInterviews pool = liftIO $
   runSqlPersistMPool (selectList [] []) pool
 
-getInterview :: ConnectionPool -> InterviewId -> HandlerResponse (Entity Interview)
-getInterview = getInterview'
+getInterview :: ConnectionPool -> InterviewId -> HandlerResponse InterviewWithQuestions
+getInterview pool interviewId = do
+  interview <- getInterview' pool interviewId
+  questions <- liftIO $ getQuestions pool interviewId
+  return $ InterviewWithQuestions (interview' interview) (questions' questions)
+  where
+    interview' (Entity _ i) = interviewName i
+    questions' = map (\(Entity _ q) -> questionContent q)
 
 getInterview' :: ConnectionPool -> InterviewId -> HandlerResponse (Entity Interview)
 getInterview' pool interviewId = do
@@ -42,6 +48,10 @@ getInterview' pool interviewId = do
       throwError err404
     Just interview ->
       return interview
+
+getQuestions pool interviewId = do
+  questions <- liftIO $ runSqlPersistMPool (selectList [QuestionInterviewId ==. interviewId] []) pool
+  return questions
 
 updateInterview :: ConnectionPool -> InterviewId -> Interview -> HandlerResponse NoContent
 updateInterview pool interviewId interview = do

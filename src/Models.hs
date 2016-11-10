@@ -10,9 +10,9 @@
 
 module Models where
 
-import           Database.Persist.TH (mkMigrate, mkPersist, persistLowerCase,
-                                      share, sqlSettings)
-import           GHC.Generics        (Generic)
+import Database.Persist.TH (mkMigrate, mkPersist, persistLowerCase, share, sqlSettings)
+import GHC.Generics (Generic)
+import Data.Aeson
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Interview json
@@ -25,3 +25,10 @@ Question json
   content String
   deriving Eq Read Show
 |]
+
+data InterviewWithQuestions = InterviewWithQuestions
+  { name :: String
+  , questions :: [String]
+  } deriving (Eq, Show, Generic)
+
+instance ToJSON InterviewWithQuestions

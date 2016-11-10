@@ -6,14 +6,14 @@ module Api where
 
 import           Data.Proxy
 import           Database.Persist (Entity)
-import           Models           (Interview, InterviewId)
+import           Models
 import           Servant.API      ((:<|>), (:>), Capture, Delete, Get, JSON,
                                    NoContent, Post, Put, ReqBody)
 type Api =
   "interview"
               :> Get '[JSON] [Entity Interview]
   :<|> "interview" :> Capture "id" InterviewId
-              :> Get '[JSON] (Entity Interview)
+              :> Get '[JSON] InterviewWithQuestions
   :<|> "interview" :> Capture "id" InterviewId
               :> ReqBody '[JSON] Interview
               :> Put '[JSON] NoContent
