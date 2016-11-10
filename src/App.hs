@@ -15,6 +15,7 @@ import Models
 import Network.Wai.Handler.Warp
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import Servant
+import Control.Monad
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Except
 import System.Random
@@ -53,11 +54,17 @@ getQuestions pool interviewId = do
   questions <- liftIO $ runSqlPersistMPool (selectList [QuestionInterviewId ==. interviewId] []) pool
   return questions
 
-updateInterview :: ConnectionPool -> InterviewId -> Interview -> HandlerResponse NoContent
-updateInterview pool interviewId interview = do
+updateInterview :: ConnectionPool -> InterviewId -> InterviewWithQuestions -> HandlerResponse NoContent
+updateInterview pool interviewId interviewWithQuestions = do
   getInterview' pool interviewId
-  liftIO $ runSqlPersistMPool (replace interviewId interview) pool
+  liftIO $ runSqlPersistMPool queries pool
   return NoContent
+  where queries = do
+          deleteWhere [QuestionInterviewId ==. interviewId]
+          mapM_ (\(p, q) -> insert $ Question interviewId p q) $ zip [1..] (questions interviewWithQuestions)
+          let interview' = Interview (name interviewWithQuestions)
+          replace interviewId interview'
+
 
 deleteInterview :: ConnectionPool -> InterviewId -> HandlerResponse NoContent
 deleteInterview pool interviewId = do

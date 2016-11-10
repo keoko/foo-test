@@ -32,3 +32,4 @@ data InterviewWithQuestions = InterviewWithQuestions
   } deriving (Eq, Show, Generic)
 
 instance ToJSON InterviewWithQuestions
+instance FromJSON InterviewWithQuestions

@@ -15,7 +15,7 @@ type Api =
   :<|> "interview" :> Capture "id" InterviewId
               :> Get '[JSON] InterviewWithQuestions
   :<|> "interview" :> Capture "id" InterviewId
-              :> ReqBody '[JSON] Interview
+              :> ReqBody '[JSON] InterviewWithQuestions
               :> Put '[JSON] NoContent
   :<|> "interview" :> Capture "id" InterviewId
               :> Delete '[JSON] NoContent
