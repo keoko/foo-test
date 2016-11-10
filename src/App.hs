@@ -50,6 +50,7 @@ getInterview' pool interviewId = do
     Just interview ->
       return interview
 
+getQuestions :: ConnectionPool -> InterviewId -> IO [Entity Question]
 getQuestions pool interviewId = do
   questions <- liftIO $ runSqlPersistMPool (selectList [QuestionInterviewId ==. interviewId] []) pool
   return questions

@@ -32,7 +32,8 @@ or nginx?
 CLOSED: [2016-11-09 Wed 18:36]
 ** DONE handle API error cases (entity not found)
 CLOSED: [2016-11-09 Wed 18:36]
-** TODO interview as a set of questions
+** DONE interview as a set of questions
+CLOSED: [2016-11-10 Thu 08:31]
 ** TODO interview application
 ** TODO cascade remove (interview -> question)
 ** TODO elm UI + servant API
