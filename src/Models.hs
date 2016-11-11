@@ -24,6 +24,15 @@ Question json
   position Int
   content String
   deriving Eq Read Show
+FooTest json
+  interviewId InterviewId
+  name String
+  email String
+  deriving Eq Read Show
+Answer json
+  testId FooTestId
+  content String
+  deriving Eq Read Show
 |]
 
 data InterviewWithQuestions = InterviewWithQuestions
@@ -33,3 +42,13 @@ data InterviewWithQuestions = InterviewWithQuestions
 
 instance ToJSON InterviewWithQuestions
 instance FromJSON InterviewWithQuestions
+
+
+data LoginForm = LoginForm
+  { userName :: String
+  , userEmail :: String
+  , interviewId :: InterviewId
+  } deriving (Eq, Show, Generic)
+
+instance ToJSON LoginForm
+instance FromJSON LoginForm

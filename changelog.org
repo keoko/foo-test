@@ -36,7 +36,13 @@ CLOSED: [2016-11-09 Wed 18:36]
 CLOSED: [2016-11-10 Thu 08:31]
 ** TODO interview application
 ** TODO cascade remove (interview -> question)
+** TODO link interview with applications
+** TODO security (who can get the interview questions?)
+** TODO API best practices (return ID or not and when)
 ** TODO elm UI + servant API
+** TODO check PATCH operation
+** TODO validate email address
+** TODO improve error messages
 
 * Features
 ** TODO testing

@@ -31,6 +31,7 @@ server pool = getAllInterviews pool
               :<|> createInterview pool
               :<|> updateInterview pool
               :<|> deleteInterview pool
+              :<|> applyForInterview pool
 
 getAllInterviews :: ConnectionPool -> HandlerResponse [Entity Interview]
 getAllInterviews pool = liftIO $
@@ -55,7 +56,7 @@ getInterview' pool interviewId = do
       return interview
 
 getQuestions :: ConnectionPool -> InterviewId -> IO [Entity Question]
-getQuestions pool interviewId = 
+getQuestions pool interviewId =
   liftIO $ runSqlPersistMPool (selectList [QuestionInterviewId ==. interviewId] []) pool
 
 
@@ -86,8 +87,13 @@ deleteInterview pool interviewId = do
   liftIO $ runSqlPersistMPool (delete interviewId) pool
   return NoContent
 
--- createPostHandler =
---   throwError (err301 { errHeaders = [("Location", "/dashboard.html")]})
+applyForInterview :: ConnectionPool -> LoginForm -> HandlerResponse NoContent
+applyForInterview pool loginForm = do
+  getInterview' pool (interviewId loginForm)
+  liftIO $ runSqlPersistMPool insertTestQuery pool
+  return NoContent
+  where insertTestQuery = insert $ FooTest (interviewId loginForm) (userName loginForm) (userEmail loginForm)
+
 
 -- newCode =
 --   take 10 $ randomRs ('a','z') $ unsafePerformIO newStdGen
