@@ -22,11 +22,11 @@ type Api =
               :> Put '[JSON] NoContent
   :<|> "interview" :> Capture "id" InterviewId
               :> Delete '[JSON] NoContent
-  :<|> "foo-test" :> ReqBody '[JSON] LoginForm
-               :> Post '[JSON] NoContent
-  -- :<|> "apply" :> Capture "id" ApplicationId
-  --              :> ReqBody '[JSON] ApplicationForm
-  --              :> Put '[JSON] NoContent
+  :<|> "test" :> ReqBody '[JSON] LoginForm
+              :> Post '[JSON] NoContent
+  :<|> "test" :> Capture "id" FooTestId
+              :> ReqBody '[JSON] TestResponseForm
+              :> Put '[JSON] NoContent
 
 api :: Proxy Api
 api = Proxy

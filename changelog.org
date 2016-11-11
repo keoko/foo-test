@@ -41,8 +41,6 @@ CLOSED: [2016-11-10 Thu 08:31]
 ** TODO API best practices (return ID or not and when)
 ** TODO elm UI + servant API
 ** TODO check PATCH operation
-** TODO validate email address
-** TODO improve error messages
 
 * Features
 ** TODO testing
@@ -58,6 +56,11 @@ CLOSED: [2016-11-10 Thu 08:31]
 
 
 ** TODO create dashboard
+
+
+* nice to have
+** TODO validate email address
+** TODO improve error messages
 
 * to check
 ** TODO purescript + servant API

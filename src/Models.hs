@@ -31,6 +31,7 @@ FooTest json
   deriving Eq Read Show
 Answer json
   testId FooTestId
+  position Int
   content String
   deriving Eq Read Show
 |]
@@ -52,3 +53,12 @@ data LoginForm = LoginForm
 
 instance ToJSON LoginForm
 instance FromJSON LoginForm
+
+
+data TestResponseForm = TestResponseForm
+  { fooTestId :: FooTestId
+  , answers :: [String]
+  } deriving (Eq, Show, Generic)
+
+instance ToJSON TestResponseForm
+instance FromJSON TestResponseForm

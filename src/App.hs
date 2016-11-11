@@ -32,6 +32,7 @@ server pool = getAllInterviews pool
               :<|> updateInterview pool
               :<|> deleteInterview pool
               :<|> applyForInterview pool
+              :<|> updateTest pool
 
 getAllInterviews :: ConnectionPool -> HandlerResponse [Entity Interview]
 getAllInterviews pool = liftIO $
@@ -95,6 +96,16 @@ applyForInterview pool loginForm = do
   where insertTestQuery = insert $ FooTest (interviewId loginForm) (userName loginForm) (userEmail loginForm)
 
 
+updateTest :: ConnectionPool -> FooTestId -> TestResponseForm  -> HandlerResponse NoContent
+updateTest pool testId form = do
+  getTest' pool testId
+  liftIO $ runSqlPersistMPool updateTestQueries pool
+  return NoContent
+  where
+    updateTestQueries = do
+      deleteWhere [AnswerTestId ==. testId]
+      insertTestQueries testId $ answers form
+
 -- newCode =
 --   take 10 $ randomRs ('a','z') $ unsafePerformIO newStdGen
 
@@ -108,3 +119,16 @@ startApp port pool = run port (logStdoutDev $ app pool)
 -- Helper functions
 insertQuestionQueries interviewId questions =
   mapM_ (\(p, q) -> insert $ Question interviewId p q) $ zip [1..] questions
+
+insertTestQueries testId answers =
+  mapM_ (\(p, q) -> insert $ Answer testId p q) $ zip [1..] answers
+
+
+getTest' :: ConnectionPool -> FooTestId -> HandlerResponse (Entity FooTest)
+getTest' pool testId = do
+  maybeTest <- liftIO $ runSqlPersistMPool (selectFirst [FooTestId ==. testId] []) pool
+  case maybeTest of
+    Nothing ->
+      throwError err404
+    Just test ->
+      return test
