@@ -1,0 +1,1 @@
+{"mappings":";;AAQA;;;;;AAEA,kBAAA;;;AAWA,kBACc;AAJd,yCACE;IAAM,OAAiB,wDAAvB,KAAuB;;AAPzB,qBACA;IAAgB,OAAhB;;AAcA,eACW;AAJX,YACQ;AAVR,mCAAA;WAAA;QAAA,OAAA,MAAA;;;AACA,sCAAA;WAAA;GAAA;WAAA;QAAA,4CAAA,GAAA","sources":["../../bower_components/purescript-dom/src/DOM/HTML/HTMLMediaElement/CanPlayType.purs"],"names":[],"version":3,"file":"index.js"}

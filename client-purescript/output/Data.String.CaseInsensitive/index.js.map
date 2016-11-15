@@ -1,0 +1,1 @@
+{"mappings":";;AAEA;AAEA;AACA;;;;;AAGA,4BAAA;;;AAUA,mDACE;IAAM,OAA2B,6BAAjC,IAAiC;;AAEnC,4DAAA;IAAA,OAAA;GAAA;AAXA,6CACE;WAAA;QAAI,2BAAJ,2BAAA;;;AAGF,gDAAA;WAAA;GACE;WAAA;QAAS,gEAAT,wBAAA","sources":["../../bower_components/purescript-strings/src/Data/String/CaseInsensitiveString.purs"],"names":[],"version":3,"file":"index.js"}

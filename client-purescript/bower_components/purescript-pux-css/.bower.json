@@ -1,0 +1,31 @@
+{
+  "name": "purescript-pux-css",
+  "description": "Render purescript-css to a Pux attribute.",
+  "main": "index.js",
+  "authors": [
+    "Alex Mingoia"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "pux",
+    "css",
+    "purescript-css",
+    "pux-css"
+  ],
+  "moduleType": [],
+  "homepage": "https://alexmingoia.github.io/purescript-pux",
+  "dependencies": {
+    "purescript-css": "https://github.com/slamdata/purescript-css.git#81d1c353eb0f072a212512242e5a8d55cf8f89db",
+    "purescript-pux": "https://github.com/alexmingoia/purescript-pux.git#v7.0.0"
+  },
+  "version": "3.1.0",
+  "_release": "3.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.1.0",
+    "commit": "861e618aa92df4321a0a895062fa4132d110510e"
+  },
+  "_source": "https://github.com/alexmingoia/pux-css.git",
+  "_target": "v3.1.0",
+  "_originalSource": "https://github.com/alexmingoia/pux-css.git"
+}

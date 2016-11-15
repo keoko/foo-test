@@ -1,0 +1,1 @@
+{"mappings":";;AAEA;AAEA;AACA;AACA;;;;AASA,WAAA;;;AAOA,iDACE;WAAA;QAAQ,OAAmB,eAAA;mBAA3B,EAAA;;;;AANF,2CAAA;IAAA,OAAA;GAAA;AAQA,wCAAA;WAAA;;AANA,yDACE;WAAA;eAAA;YAAA,OAAsB,eAAA;uBAAtB,GAAA,EAAA","sources":["../../bower_components/purescript-monoid/src/Data/Monoid/Endo.purs"],"names":[],"version":3,"file":"index.js"}

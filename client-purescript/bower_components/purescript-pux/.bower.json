@@ -1,0 +1,55 @@
+{
+  "name": "purescript-pux",
+  "description": "Pux is an FRP interface to React, based on the Elm app architecture.",
+  "authors": [
+    "Alexander Mingoia <talk@alexmingoia.com>"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "node_modules",
+    "bower_components"
+  ],
+  "keywords": [
+    "purescript",
+    "pux",
+    "react",
+    "elm",
+    "flux",
+    "redux",
+    "frp",
+    "virtual-dom"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/alexmingoia/purescript-pux.git"
+  },
+  "dependencies": {
+    "purescript-aff": "^2.0.1",
+    "purescript-eff": "^2.0.0",
+    "purescript-lists": "^3.1.0",
+    "purescript-signal": "^8.0.0",
+    "purescript-maps": "^2.0.0",
+    "purescript-functions": "^2.0.0",
+    "purescript-profunctor": "^2.0.0",
+    "purescript-react": "^2.0.0",
+    "purescript-globals": "^2.0.0"
+  },
+  "devDependencies": {
+    "purescript-affjax": "^3.0.0",
+    "purescript-argonaut": "^2.0.0"
+  },
+  "resolutions": {
+    "purescript-dom": "^3.1.0"
+  },
+  "homepage": "https://github.com/alexmingoia/purescript-pux",
+  "version": "7.0.0",
+  "_release": "7.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v7.0.0",
+    "commit": "838162cdcbb0d0bf3fe675f197f06cb6445ca7eb"
+  },
+  "_source": "https://github.com/alexmingoia/purescript-pux.git",
+  "_target": "^7.0.0",
+  "_originalSource": "purescript-pux"
+}

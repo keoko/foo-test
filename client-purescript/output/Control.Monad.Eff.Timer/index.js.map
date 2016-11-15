@@ -1,0 +1,1 @@
+{"mappings":";;;AAUA;AAEA;;;AAMA,gBAAA;;;AAwBA,iBAAA;;;AAtBA,iCAAA;WAAA;QAAA,OAAA,MAAA;;;AACA,oCAAA;WAAA;GAAA;WAAA;QAAA,yCAAA,GAAA;;;AAuBA,kCAAA;WAAA;QAAA,OAAA,MAAA;;;AACA,qCAAA;WAAA;GAAA;WAAA;QAAA,yCAAA,GAAA","sources":["../../bower_components/purescript-js-timers/src/Control/Monad/Eff/Timer.purs"],"names":[],"version":3,"file":"index.js"}

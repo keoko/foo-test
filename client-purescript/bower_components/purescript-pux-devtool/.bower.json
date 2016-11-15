@@ -1,0 +1,36 @@
+{
+  "name": "purescript-pux-devtool",
+  "description": "Pux time-travelling devtool.",
+  "main": "index.js",
+  "authors": [
+    "Alex Mingoia"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "pux",
+    "devtool",
+    "devtools",
+    "debugger",
+    "debug",
+    "pux-debug",
+    "pux-devtool",
+    "pux-devtools",
+    "time-travel"
+  ],
+  "homepage": "https://github.com/alexmingoia/pux-devtool",
+  "moduleType": [],
+  "dependencies": {
+    "purescript-pux": "https://github.com/alexmingoia/purescript-pux.git#v7.0.0",
+    "purescript-pux-css": "https://github.com/alexmingoia/pux-css.git#v3.1.0"
+  },
+  "version": "4.1.0",
+  "_release": "4.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.1.0",
+    "commit": "ceb9a4e5e79bac598b0d05c5e4faf14a76bbe15e"
+  },
+  "_source": "https://github.com/alexmingoia/pux-devtool.git",
+  "_target": "^4.1.0",
+  "_originalSource": "purescript-pux-devtool"
+}
